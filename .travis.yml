@@ -1,0 +1,12 @@
+install:
+  - time
+
+script:
+  - time
+
+deploy:
+  provider: rubygems
+  api_key: $RUBYGEMS_API_KEY
+  on:
+    repo: mchicote/capistrano3-autoscaling-deploy
+    branch: master
