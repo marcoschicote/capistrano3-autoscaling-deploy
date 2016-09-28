@@ -9,7 +9,7 @@ namespace :load do
 end
 
 namespace :deploy do
-  before :starting do
+  before :starting, :check_autoscaling_hooks do
     invoke 'autoscaling_deploy:setup_instances' if fetch(:aws_autoscaling)
   end
 end
