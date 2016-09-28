@@ -8,11 +8,11 @@ namespace :load do
   end
 end
 
-# namespace :deploy do
-#   before :starting do
-#     invoke 'autoscaling_deploy:setup_instances' if fetch(:aws_autoscaling)
-#   end
-# end
+namespace :deploy do
+  before :starting do
+    invoke 'autoscaling_deploy:setup_instances' if fetch(:aws_autoscaling)
+  end
+end
 
 namespace :autoscaling_deploy do
   include AwsHelper
@@ -21,7 +21,7 @@ namespace :autoscaling_deploy do
   desc 'Add server from Auto Scaling Group.'
   task :setup_instances do
     ec2_instances = fetch_ec2_instances
-    aws_deploy_roles = [:db, :web, :app]#fetch(:aws_deploy_roles)
+    aws_deploy_roles = fetch(:aws_deploy_roles)
 
     ec2_instances.each {|instance|
       if ec2_instances.first[0] == instance
@@ -43,7 +43,7 @@ namespace :autoscaling_deploy do
 
     instances = get_instances(region, key, secret, group_name)
 
-    puts("Found #{instances.count} servers for Auto Scaling Group: #{group_name} ")
+    logger.info("Found #{instances.count} servers for Auto Scaling Group: #{group_name} ")
 
     instances
   end
