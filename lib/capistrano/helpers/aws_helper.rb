@@ -16,7 +16,7 @@ module AwsHelper
     else
       instance_ids = instances.map(&:instance_id)
       ec2 = Aws::EC2::Resource.new(region: aws_region, credentials: aws_credentials)
-      puts "instances_ids #{instance_ids}"
+      info("Auto Scaling Group instances ids: #{instance_ids}")
       autoscaling_dns = instance_ids.map do |instance_id|
         ec2.instance(instance_id).public_dns_name
       end
@@ -32,13 +32,11 @@ module AwsHelper
         max_records: 1,
     ).auto_scaling_groups
 
-    puts "as groups: #{as_groups}"
+    info("Auto Scaling Groups: #{as_groups}")
 
     as_group = as_groups[0]
 
-    puts "as group: #{as_group}"
-
-    puts "as group: #{as_group.instances}"
+    info("Auto Scaling Group instances: #{as_group.instances}")
 
     as_group.instances
   end

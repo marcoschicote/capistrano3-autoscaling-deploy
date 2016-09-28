@@ -26,10 +26,10 @@ namespace :autoscaling_deploy do
     ec2_instances.each {|instance|
       if ec2_instances.first[0] == instance
         server instance, *roles
-        logger.info("First Server: #{instance} - #{aws_deploy_roles}")
+        info("First Server: #{instance} - #{aws_deploy_roles}")
       else
         server instance, *sanitize_roles(roles)
-        logger.info("Server: #{instance} - #{sanitize_roles(aws_deploy_roles)}")
+        info("Server: #{instance} - #{sanitize_roles(aws_deploy_roles)}")
       end
     }
 
@@ -43,7 +43,7 @@ namespace :autoscaling_deploy do
 
     instances = get_instances(region, key, secret, group_name)
 
-    logger.info("Found #{instances.count} servers for Auto Scaling Group: #{group_name} ")
+    info("Found #{instances.count} servers for Auto Scaling Group: #{group_name} ")
 
     instances
   end
