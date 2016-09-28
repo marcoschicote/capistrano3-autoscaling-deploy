@@ -1,10 +1,10 @@
 PATH
   remote: .
   specs:
-    capistrano3-autoscaling-deploy (0.1)
+    capistrano3-autoscaling-deploy (0.2)
       aws-sdk (~> 2)
       capistrano (~> 3)
-      capistrano-bundler
+      capistrano-bundler (~> 1.1.2)
 
 GEM
   remote: http://rubygems.org/

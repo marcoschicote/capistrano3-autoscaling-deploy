@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = Capistrano::AutoScalingDeploy::VERSION
   spec.authors       = ['Marcos Chicote']
   spec.email         = ['chicotemarcos@gmail.com']
-  spec.summary       = %q{Get all instances in an AutoScaling group by AutoScaling EC2 Tag and depoy.}
+  spec.summary       = %q{Deploy to AWS Auto Scaling group.}
   spec.description   = %q{Get all instances in an AutoScaling group by AutoScaling EC2 Tag and depoy.}
-  spec.homepage      = ''
+  spec.homepage      = 'https://github.com/mchicote/capistrano3-autoscaling-deploy'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files`.split($/)
@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'aws-sdk', '~> 2'
   spec.add_dependency 'capistrano', '~> 3'
-  spec.add_dependency 'capistrano-bundler'
+  spec.add_dependency 'capistrano-bundler', '~> 1.1.2'
   spec.add_development_dependency 'bundler', '~> 1.5'
   spec.add_development_dependency 'rake'
 end
