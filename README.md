@@ -45,6 +45,7 @@ set :aws_access_key_id, 'YOUR AWS KEY ID'
 set :aws_secret_access_key, 'YOUR AWS SECRET KEY'
 set :aws_autoscaling_group_name, 'YOUR NAME OF AUTO SCALING GROUP NAME'
 set :aws_deploy_roles, [:app, :web, :db]
+set :aws_deploy_user, 'USER FOR SSH CONNECTION'
 ```
 
 you can add more auto scaling configs to deploy to multiple auto scaling groups like a cluster

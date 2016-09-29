@@ -22,13 +22,14 @@ namespace :autoscaling_deploy do
   task :setup_instances do
     ec2_instances = fetch_ec2_instances
     aws_deploy_roles = fetch(:aws_deploy_roles)
+    aws_deploy_user = fetch(:aws_deploy_user)
 
     ec2_instances.each {|instance|
       if ec2_instances.first[0] == instance
-        server instance, *aws_deploy_roles
+        server instance, *aws_deploy_roles, user: aws_deploy_user
         # info("First Server: #{instance} - #{aws_deploy_roles}")
       else
-        server instance, *sanitize_roles(roles)
+        server instance, *sanitize_roles(roles), user: aws_deploy_user
         # info("Server: #{instance} - #{sanitize_roles(aws_deploy_roles)}")
       end
     }
