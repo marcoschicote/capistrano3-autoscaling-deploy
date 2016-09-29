@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    capistrano3-autoscaling-deploy (0.7)
+    capistrano3-autoscaling-deploy (0.8)
       aws-sdk (~> 2)
       capistrano (~> 3)
       capistrano-bundler (~> 1.1.2)
