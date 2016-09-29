@@ -29,7 +29,7 @@ namespace :autoscaling_deploy do
         server instance, *aws_deploy_roles, user: aws_deploy_user
         # info("First Server: #{instance} - #{aws_deploy_roles}")
       else
-        server instance, *sanitize_roles(roles), user: aws_deploy_user
+        server instance, *sanitize_roles(aws_deploy_roles), user: aws_deploy_user
         # info("Server: #{instance} - #{sanitize_roles(aws_deploy_roles)}")
       end
     }
