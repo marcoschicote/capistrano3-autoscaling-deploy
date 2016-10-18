@@ -5,6 +5,7 @@ namespace :load do
   task :defaults do
     set :aws_autoscaling, true
     set :aws_region, 'us-west-2'
+    set :aws_deploy_roles, %w{web app db}
   end
 end
 
