@@ -26,7 +26,7 @@ namespace :autoscaling_deploy do
     aws_deploy_user = fetch(:aws_deploy_user)
 
     ec2_instances.each {|instance|
-      if ec2_instances.first[0] == instance
+      if ec2_instances.first == instance
         server instance, user: aws_deploy_user, roles: aws_deploy_roles, primary: true
         puts("First Server: #{instance} - #{aws_deploy_roles}")
       else
@@ -45,7 +45,7 @@ namespace :autoscaling_deploy do
 
     instances = get_instances(region, key, secret, group_name)
 
-    # info("Found #{instances.count} servers for Auto Scaling Group: #{group_name} ")
+    puts("Found #{instances.count} servers (#{instances.join(',')}) for Auto Scaling Group: #{group_name} ")
 
     instances
   end
