@@ -28,10 +28,10 @@ namespace :autoscaling_deploy do
     ec2_instances.each {|instance|
       if ec2_instances.first[0] == instance
         server instance, user: aws_deploy_user, roles: aws_deploy_roles, primary: true
-        info("First Server: #{instance} - #{aws_deploy_roles}")
+        puts("First Server: #{instance} - #{aws_deploy_roles}")
       else
         server instance, user: aws_deploy_user, roles: sanitize_roles(aws_deploy_roles)
-        info("Server: #{instance} - #{sanitize_roles(aws_deploy_roles)}")
+        puts("Server: #{instance} - #{sanitize_roles(aws_deploy_roles)}")
       end
     }
 
