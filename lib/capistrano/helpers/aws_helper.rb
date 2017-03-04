@@ -19,12 +19,10 @@ module AwsHelper
       instance_ids = instances.map(&:instance_id)
       ec2 = Aws::EC2::Resource.new(region: aws_region, credentials: aws_credentials)
       # info("Auto Scaling Group instances ids: #{instance_ids}")
+      aws_ip_type = 'public_dns_name' unless IP_TYPES.include? aws_ip_type
+        
       autoscaling_dns = instance_ids.map do |instance_id|
-        if IP_TYPES.include? aws_ip_type
-          ec2.instance(instance_id).send(aws_ip_type.to_sym)
-        else
-          ec2.instance(instance_id).public_dns_name
-        end
+        ec2.instance(instance_id).send(aws_ip_type.to_sym)
       end
     end
 
