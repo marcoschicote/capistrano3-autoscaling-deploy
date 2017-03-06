@@ -6,6 +6,7 @@ namespace :load do
     set :aws_autoscaling, true
     set :aws_region, 'us-west-2'
     set :aws_deploy_roles, %w{web app db}
+    set :aws_ip_type, 'public_dns_name'
   end
 end
 
@@ -42,8 +43,9 @@ namespace :autoscaling_deploy do
     key = fetch(:aws_access_key_id)
     secret = fetch(:aws_secret_access_key)
     group_name = fetch(:aws_autoscaling_group_name)
+    ip_type = fetch(:aws_ip_type)
 
-    instances = get_instances(region, key, secret, group_name)
+    instances = get_instances(region, key, secret, group_name, ip_type)
 
     puts("Found #{instances.count} servers (#{instances.join(',')}) for Auto Scaling Group: #{group_name} ")
 
