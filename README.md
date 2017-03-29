@@ -48,7 +48,7 @@ set :aws_deploy_roles, [:app, :web, :db]
 set :aws_deploy_user, 'USER FOR SSH CONNECTION'
  
 # optional: defaults to 'public_dns_name'
-# select from ['public_ip', 'public_dns_name', 'private_ip_address', 'private_dns_name']
+# select from ['public_ip_address', 'public_dns_name', 'private_ip_address', 'private_dns_name']
 set :aws_ip_type, 'public_dns_name'
 ```
 
