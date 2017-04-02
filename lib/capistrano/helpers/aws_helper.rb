@@ -1,7 +1,7 @@
 require 'aws-sdk'
 
 module AwsHelper
-  IP_TYPES = %w(public_ip public_dns_name private_ip_address private_dns_name)
+  IP_TYPES = %w(public_ip_address public_dns_name private_ip_address private_dns_name)
 
   def get_instances(aws_region, aws_access_key_id, aws_secret_access_key, aws_autoscaling_group_name, aws_ip_type)
     aws_credentials = Aws::Credentials.new(aws_access_key_id, aws_secret_access_key)
