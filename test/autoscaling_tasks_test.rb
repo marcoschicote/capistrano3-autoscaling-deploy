@@ -40,6 +40,15 @@ class AutoscalingTasksTest < Minitest::Test
     end
   end
 
+  def test_works_without_explicit_keys
+    set :aws_access_key_id, nil
+    set :aws_secret_access_key, nil
+    set :aws_profile, 'deploy'
+    capture_io { Rake::Task['autoscaling_deploy:setup_instances'].invoke }
+
+    assert_equal 3, servers.size
+  end
+
   def test_runs_before_deploy_starting
     assert_includes Rake::Task["deploy:starting"].prerequisites.map(&:to_s), 'deploy:check_autoscaling_hooks'
   end
