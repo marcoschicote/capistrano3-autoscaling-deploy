@@ -14,13 +14,13 @@ jobs:
       contents: write # push the version tag
       id-token: write # RubyGems trusted publishing
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ruby/setup-ruby@v1
+      - uses: ruby/setup-ruby@e81a8fa391b11a595c1b7ed84177cc0fe02faf83 # v1.328.0
         with:
           ruby-version: '4.0'
           bundler-cache: true
       - run: bundle exec rake test
       # Builds the gem, pushes the vX.Y.Z tag and publishes it to RubyGems
-      - uses: rubygems/release-gem@v1
+      - uses: rubygems/release-gem@7f9650160c1a4e7989fdc9855807bdbd421d8b6b # v1.4.1

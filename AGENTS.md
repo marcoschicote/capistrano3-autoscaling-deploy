@@ -33,6 +33,7 @@ bundle exec rake            # both, as CI does
 - Breaking changes also need a note in the README's "Upgrading" section.
 - New or changed settings go in the README's Settings table, with their default.
 - Keep the runtime dependencies to `capistrano`, `aws-sdk-autoscaling` and `aws-sdk-ec2`.
+- Pin GitHub Actions to a full commit SHA with the version in a comment (`uses: actions/checkout@<sha> # v7.0.1`). Dependabot updates both monthly.
 
 ## Releasing
 
