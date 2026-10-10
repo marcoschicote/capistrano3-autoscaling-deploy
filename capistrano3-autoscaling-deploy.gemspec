@@ -9,13 +9,19 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Marcos Chicote']
   spec.email         = ['chicotemarcos@gmail.com']
   spec.summary       = %q{Deploy to AWS Auto Scaling group.}
-  spec.description   = %q{Get all instances in an AutoScaling group by AutoScaling EC2 Tag and depoy.}
+  spec.description   = %q{Capistrano 3 plugin that finds the in-service instances of an AWS Auto Scaling group and deploys to them.}
   spec.homepage      = 'https://github.com/marcoschicote/capistrano3-autoscaling-deploy'
   spec.license       = 'MIT'
+  spec.required_ruby_version = '>= 3.3'
 
-  spec.files         = `git ls-files`.split($/)
-  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
-  spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
+  spec.metadata = {
+    'source_code_uri' => spec.homepage,
+    'changelog_uri' => "#{spec.homepage}/blob/master/CHANGELOG.md",
+    'bug_tracker_uri' => "#{spec.homepage}/issues",
+    'rubygems_mfa_required' => 'true'
+  }
+
+  spec.files         = `git ls-files -- lib`.split($/) + %w(README.md LICENSE CHANGELOG.md)
   spec.require_paths = ['lib']
 
   spec.add_dependency 'aws-sdk-autoscaling', '~> 1'
