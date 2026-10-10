@@ -13,7 +13,7 @@ Aws.config[:stub_responses] = true
 module AutoScalingStubs
   # Fake AWS responses. EC2 returns the instances out of order, over two pages,
   # to check that results follow the Auto Scaling group's order.
-  def stub_aws(instance_ids)
+  def stub_aws(instance_ids, lifecycle_states: {})
     Aws.config[:autoscaling] = {
       stub_responses: {
         describe_auto_scaling_groups: {
@@ -30,7 +30,7 @@ module AutoScalingStubs
               {
                 instance_id: id,
                 availability_zone: 'us-west-2a',
-                lifecycle_state: 'InService',
+                lifecycle_state: lifecycle_states.fetch(id, 'InService'),
                 health_status: 'Healthy',
                 protected_from_scale_in: false
               }
