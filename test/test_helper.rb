@@ -1,12 +1,12 @@
 # Never try to reach the EC2 instance metadata service for credentials
-ENV['AWS_EC2_METADATA_DISABLED'] = 'true'
+ENV["AWS_EC2_METADATA_DISABLED"] = "true"
 
-require 'minitest/autorun'
-require 'capistrano/all'
+require "minitest/autorun"
+require "capistrano/all"
 Rake.application.options.trace = false
-require 'capistrano/setup'
-require 'capistrano/deploy'
-require 'capistrano/autoscaling_deploy'
+require "capistrano/setup"
+require "capistrano/deploy"
+require "capistrano/autoscaling_deploy"
 
 Aws.config[:stub_responses] = true
 
@@ -18,20 +18,20 @@ module AutoScalingStubs
       stub_responses: {
         describe_auto_scaling_groups: {
           auto_scaling_groups: [{
-            auto_scaling_group_name: 'my-group',
+            auto_scaling_group_name: "my-group",
             min_size: 0,
             max_size: 10,
             desired_capacity: instance_ids.size,
             default_cooldown: 300,
-            availability_zones: ['us-west-2a'],
-            health_check_type: 'EC2',
+            availability_zones: ["us-west-2a"],
+            health_check_type: "EC2",
             created_time: Time.now,
             instances: instance_ids.map do |id|
               {
                 instance_id: id,
-                availability_zone: 'us-west-2a',
-                lifecycle_state: lifecycle_states.fetch(id, 'InService'),
-                health_status: 'Healthy',
+                availability_zone: "us-west-2a",
+                lifecycle_state: lifecycle_states.fetch(id, "InService"),
+                health_status: "Healthy",
                 protected_from_scale_in: false
               }
             end
@@ -45,8 +45,8 @@ module AutoScalingStubs
     Aws.config[:ec2] = {
       stub_responses: {
         describe_instances: [
-          { reservations: [{ instances: first_page }], next_token: 'page-2' },
-          { reservations: [{ instances: second_page }] }
+          {reservations: [{instances: first_page}], next_token: "page-2"},
+          {reservations: [{instances: second_page}]}
         ]
       }
     }

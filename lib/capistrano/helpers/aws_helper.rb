@@ -1,9 +1,9 @@
-require 'aws-sdk-autoscaling'
-require 'aws-sdk-ec2'
+require "aws-sdk-autoscaling"
+require "aws-sdk-ec2"
 
 module AwsHelper
-  IP_TYPES = %w(public_ip_address public_dns_name private_ip_address private_dns_name)
-  LIFECYCLE_STATES = %w(InService)
+  IP_TYPES = %w[public_ip_address public_dns_name private_ip_address private_dns_name]
+  LIFECYCLE_STATES = %w[InService]
 
   def get_instances(aws_region, aws_access_key_id, aws_secret_access_key, aws_autoscaling_group_name, aws_ip_type, aws_profile: nil, lifecycle_states: LIFECYCLE_STATES)
     client_options = aws_client_options(aws_region, aws_access_key_id, aws_secret_access_key, aws_profile)
@@ -14,12 +14,12 @@ module AwsHelper
   # credential chain is used: environment variables, shared config and
   # credentials files, SSO, and ECS or EC2 instance roles.
   def aws_client_options(aws_region, aws_access_key_id, aws_secret_access_key, aws_profile = nil)
-    options = { region: aws_region }
+    options = {region: aws_region}
 
     if aws_access_key_id && aws_secret_access_key
       options[:credentials] = Aws::Credentials.new(aws_access_key_id, aws_secret_access_key)
     elsif aws_access_key_id || aws_secret_access_key
-      raise ArgumentError, 'Set both :aws_access_key_id and :aws_secret_access_key, or neither to use the default AWS credential chain'
+      raise ArgumentError, "Set both :aws_access_key_id and :aws_secret_access_key, or neither to use the default AWS credential chain"
     elsif aws_profile
       options[:profile] = aws_profile
     end
@@ -42,8 +42,7 @@ module AwsHelper
     else
       instance_ids = instances.map(&:instance_id)
       ec2 = Aws::EC2::Client.new(client_options)
-      # info("Auto Scaling Group instances ids: #{instance_ids}")
-      aws_ip_type = 'public_dns_name' unless IP_TYPES.include? aws_ip_type
+      aws_ip_type = "public_dns_name" unless IP_TYPES.include? aws_ip_type
 
       ec2_instances = ec2.describe_instances(instance_ids: instance_ids).flat_map do |page|
         page.reservations.flat_map(&:instances)
@@ -57,8 +56,8 @@ module AwsHelper
       # e.g. public_dns_name is empty for instances in a private subnet
       blank_ids = instance_ids.zip(autoscaling_dns).select { |_, address| address.to_s.strip.empty? }.map(&:first)
       unless blank_ids.empty?
-        raise "Instances #{blank_ids.join(', ')} have no #{aws_ip_type}. " \
-              "Set :aws_ip_type to one of #{IP_TYPES.join(', ')} (private_ip_address for instances without public addresses)"
+        raise "Instances #{blank_ids.join(", ")} have no #{aws_ip_type}. " \
+              "Set :aws_ip_type to one of #{IP_TYPES.join(", ")} (private_ip_address for instances without public addresses)"
       end
     end
 
@@ -68,18 +67,13 @@ module AwsHelper
   def fetch_autoscaling_group_instances(client_options, autoscaling_group_name)
     as = Aws::AutoScaling::Client.new(client_options)
     as_groups = as.describe_auto_scaling_groups(
-        auto_scaling_group_names: [autoscaling_group_name],
-        max_records: 1,
+      auto_scaling_group_names: [autoscaling_group_name],
+      max_records: 1
     ).auto_scaling_groups
-
-    # info("Auto Scaling Groups: #{as_groups}")
 
     as_group = as_groups[0]
     raise "Auto Scaling group '#{autoscaling_group_name}' not found in #{client_options[:region]}" unless as_group
 
-    # info("Auto Scaling Group instances: #{as_group.instances}")
-
     as_group.instances
   end
-
 end

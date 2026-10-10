@@ -123,6 +123,8 @@ See [CHANGELOG.md](CHANGELOG.md) for all changes.
 
 Run the tests with `bundle exec rake test`. They use the AWS SDK's stubbed responses, so they don't need AWS credentials or network access.
 
+The code follows [Standard Ruby](https://github.com/standardrb/standard). Check it with `bundle exec rake standard`, or fix most offenses with `bundle exec standardrb --fix`. Running `bundle exec rake` does both the tests and the style check.
+
 ## Releasing
 
 Releases are published to RubyGems from GitHub Actions using [trusted publishing](https://guides.rubygems.org/trusted-publishing/), so no API key is stored anywhere.
