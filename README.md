@@ -1,5 +1,6 @@
 [![Gem Version](https://img.shields.io/gem/v/capistrano3-autoscaling-deploy)](https://rubygems.org/gems/capistrano3-autoscaling-deploy)
 [![Test](https://github.com/marcoschicote/capistrano3-autoscaling-deploy/actions/workflows/test.yml/badge.svg)](https://github.com/marcoschicote/capistrano3-autoscaling-deploy/actions/workflows/test.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/marcoschicote/capistrano3-autoscaling-deploy/badge)](https://scorecard.dev/viewer/?uri=github.com/marcoschicote/capistrano3-autoscaling-deploy)
 
 # capistrano3-autoscaling-deploy
 
