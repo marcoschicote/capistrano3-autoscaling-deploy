@@ -40,6 +40,24 @@ class AutoscalingTasksTest < Minitest::Test
     end
   end
 
+  def test_default_roles_give_db_to_the_first_instance_only
+    delete :aws_deploy_roles
+    Rake::Task['load:defaults'].reenable
+    Rake::Task['load:defaults'].invoke
+    capture_io { Rake::Task['autoscaling_deploy:setup_instances'].invoke }
+
+    assert_equal Set[:web, :app, :db], servers.first.roles
+    servers.drop(1).each { |server| assert_equal Set[:web, :app], server.roles }
+    assert_equal ['i-3.public.example.com'], roles(:db).map(&:hostname)
+  end
+
+  def test_string_roles_give_db_to_the_first_instance_only
+    set :aws_deploy_roles, %w{web app db}
+    capture_io { Rake::Task['autoscaling_deploy:setup_instances'].invoke }
+
+    assert_equal ['i-3.public.example.com'], roles(:db).map(&:hostname)
+  end
+
   def test_works_without_explicit_keys
     set :aws_access_key_id, nil
     set :aws_secret_access_key, nil

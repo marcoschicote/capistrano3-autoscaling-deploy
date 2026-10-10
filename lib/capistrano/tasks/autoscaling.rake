@@ -5,7 +5,7 @@ namespace :load do
   task :defaults do
     set :aws_autoscaling, true
     set :aws_region, 'us-west-2'
-    set :aws_deploy_roles, %w{web app db}
+    set :aws_deploy_roles, %i{web app db}
     set :aws_ip_type, 'public_dns_name'
     set :aws_lifecycle_states, AwsHelper::LIFECYCLE_STATES
   end
@@ -24,7 +24,7 @@ namespace :autoscaling_deploy do
   desc 'Add server from Auto Scaling Group.'
   task :setup_instances do
     ec2_instances = fetch_ec2_instances
-    aws_deploy_roles = fetch(:aws_deploy_roles)
+    aws_deploy_roles = symbolize_roles(fetch(:aws_deploy_roles))
     aws_deploy_user = fetch(:aws_deploy_user)
 
     ec2_instances.each {|instance|
