@@ -1,4 +1,5 @@
-require 'aws-sdk'
+require 'aws-sdk-autoscaling'
+require 'aws-sdk-ec2'
 
 module AwsHelper
   IP_TYPES = %w(public_ip_address public_dns_name private_ip_address private_dns_name)
@@ -17,12 +18,17 @@ module AwsHelper
       autoscaling_dns = []
     else
       instance_ids = instances.map(&:instance_id)
-      ec2 = Aws::EC2::Resource.new(region: aws_region, credentials: aws_credentials)
+      ec2 = Aws::EC2::Client.new(region: aws_region, credentials: aws_credentials)
       # info("Auto Scaling Group instances ids: #{instance_ids}")
       aws_ip_type = 'public_dns_name' unless IP_TYPES.include? aws_ip_type
-        
+
+      ec2_instances = ec2.describe_instances(instance_ids: instance_ids).flat_map do |page|
+        page.reservations.flat_map(&:instances)
+      end.to_h { |instance| [instance.instance_id, instance] }
+
+      # Keep the Auto Scaling group's order: the first instance gets the primary roles
       autoscaling_dns = instance_ids.map do |instance_id|
-        ec2.instance(instance_id).send(aws_ip_type.to_sym)
+        ec2_instances.fetch(instance_id).send(aws_ip_type.to_sym)
       end
     end
 

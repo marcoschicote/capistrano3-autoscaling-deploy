@@ -11,7 +11,8 @@ Capistrano 3 plugin for AWS Auto Scaling deploys.
 
 ## Requirements
 
-* aws-sdk ~> 2
+* aws-sdk-autoscaling ~> 1
+* aws-sdk-ec2 ~> 1
 * capistrano ~> 3
 
 
@@ -36,6 +37,8 @@ require 'capistrano/autoscaling_deploy'
 ```
 
 ### Upgrading to 2.0
+
+2.0 uses the current AWS SDK for Ruby (`aws-sdk-autoscaling` and `aws-sdk-ec2`) instead of the retired `aws-sdk` v2, so it no longer installs `aws-sdk` v2. If your own deploy code uses `aws-sdk` v2, add it to your Gemfile or, better, move that code to the current SDK.
 
 Versions before 2.0 also loaded [capistrano-bundler](https://github.com/capistrano/bundler), which runs `bundle install` on your servers during deploy. 2.0 no longer does this. If your deploy relies on it, add it to your Gemfile:
 
