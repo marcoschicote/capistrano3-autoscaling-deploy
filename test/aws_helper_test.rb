@@ -55,6 +55,20 @@ class AwsHelperTest < Minitest::Test
     assert_equal "Auto Scaling group 'my-group' not found in us-west-2", error.message
   end
 
+  def test_blank_addresses_raise_a_clear_error
+    stub_aws(INSTANCE_IDS, overrides: { 'i-1' => { public_dns_name: '' }, 'i-2' => { public_dns_name: '' } })
+
+    error = assert_raises(RuntimeError) { instances('public_dns_name') }
+    assert_match(/\AInstances i-1, i-2 have no public_dns_name\. Set :aws_ip_type/, error.message)
+  end
+
+  def test_missing_addresses_raise_a_clear_error
+    stub_aws(INSTANCE_IDS, overrides: { 'i-3' => { public_ip_address: nil } })
+
+    error = assert_raises(RuntimeError) { instances('public_ip_address') }
+    assert_match(/\AInstances i-3 have no public_ip_address\./, error.message)
+  end
+
   def test_empty_group_returns_no_instances
     stub_aws([])
 
