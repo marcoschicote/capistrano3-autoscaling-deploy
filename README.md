@@ -1,4 +1,5 @@
 [![Gem Version](https://badge.fury.io/rb/capistrano3-autoscaling-deploy.png)](http://badge.fury.io/rb/capistrano3-autoscaling-deploy)
+[![Test](https://github.com/marcoschicote/capistrano3-autoscaling-deploy/actions/workflows/test.yml/badge.svg)](https://github.com/marcoschicote/capistrano3-autoscaling-deploy/actions/workflows/test.yml)
 # capistrano3-autoscaling-deploy
 Capistrano 3 plugin for AWS Auto Scaling deploys.
  
@@ -89,11 +90,10 @@ server ip_address3, :app, :web
 
 ## Contributing
 
-1. Fork it ( http://github.com/mchicote/capistrano3-autoscaling-deploy/fork )
+1. Fork it ( https://github.com/marcoschicote/capistrano3-autoscaling-deploy/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
 
-To test while developoing just `bundle console` on the project root directory and execute 
-`Capistrano::AutoScalingDeploy::VERSION` for a quick test
+Run the tests with `bundle exec rake test`. They use the AWS SDK's stubbed responses, so they don't need AWS credentials or network access.

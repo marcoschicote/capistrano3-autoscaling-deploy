@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['chicotemarcos@gmail.com']
   spec.summary       = %q{Deploy to AWS Auto Scaling group.}
   spec.description   = %q{Get all instances in an AutoScaling group by AutoScaling EC2 Tag and depoy.}
-  spec.homepage      = 'https://github.com/mchicote/capistrano3-autoscaling-deploy'
+  spec.homepage      = 'https://github.com/marcoschicote/capistrano3-autoscaling-deploy'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files`.split($/)
@@ -22,5 +22,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'aws-sdk-ec2', '~> 1'
   spec.add_dependency 'capistrano', '~> 3'
   spec.add_development_dependency 'bundler', '>= 2.2.33'
+  spec.add_development_dependency 'minitest'
   spec.add_development_dependency 'rake'
 end
