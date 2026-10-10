@@ -24,6 +24,7 @@ bundle exec rake            # both, as CI does
 - Task tests run the real Capistrano tasks: they reset `Capistrano::Configuration` and re-enable the Rake tasks in `setup`.
 - For a bug fix, write the failing test first, and check that it fails without the fix.
 - Ruby warnings from net-ssh and Capistrano during the test run are expected.
+- CodeQL (`.github/workflows/codeql.yml`) scans the Ruby code and the workflows on every PR and weekly. Results are under Security → Code scanning; it isn't a required check.
 
 ## Conventions
 
