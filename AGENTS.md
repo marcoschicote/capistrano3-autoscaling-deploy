@@ -19,7 +19,7 @@ bundle exec rake standard   # Standard Ruby style check (standardrb --fix to fix
 bundle exec rake            # both, as CI does
 ```
 
-- Ruby 3.3 or newer. CI runs the tests on Ruby 3.3, 3.4 and 4.0 and Standard on 3.3 (`.github/workflows/test.yml`). All four checks are required to merge into `master`.
+- Ruby 3.3 or newer. CI runs the tests on Ruby 3.3, 3.4 and 4.0 and Standard on 3.3 (`.github/workflows/test.yml`). CodeQL also runs on every pull request. These six checks are required to merge into `main`.
 - Tests must never call AWS. They use the SDK's `stub_responses` through `stub_aws` in `test/test_helper.rb`, which also sets `AWS_EC2_METADATA_DISABLED`. Credential tests isolate `~/.aws` and reset the SDK's cached shared config.
 - Task tests run the real Capistrano tasks: they reset `Capistrano::Configuration` and re-enable the Rake tasks in `setup`.
 - For a bug fix, write the failing test first, and check that it fails without the fix.

@@ -1,13 +1,13 @@
 name: Release
 
 # Run manually from the Actions tab once the version in
-# lib/capistrano/autoscaling_deploy/version.rb and CHANGELOG.md are updated on master.
+# lib/capistrano/autoscaling_deploy/version.rb and CHANGELOG.md are updated on main.
 on:
   workflow_dispatch:
 
 jobs:
   release:
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: release
     permissions:

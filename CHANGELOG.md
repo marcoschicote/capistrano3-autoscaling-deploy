@@ -36,4 +36,4 @@ First release since 1.6 (2017). See [Upgrading to 2.0](README.md#upgrading-to-20
 
 ## 1.6 and earlier
 
-See the [commit history](https://github.com/marcoschicote/capistrano3-autoscaling-deploy/commits/master).
+See the [commit history](https://github.com/marcoschicote/capistrano3-autoscaling-deploy/commits/main).
