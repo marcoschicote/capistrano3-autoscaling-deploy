@@ -25,6 +25,7 @@ bundle exec rake            # both, as CI does
 - For a bug fix, write the failing test first, and check that it fails without the fix.
 - Ruby warnings from net-ssh and Capistrano during the test run are expected.
 - CodeQL (`.github/workflows/codeql.yml`) scans the Ruby code and the workflows on every PR and weekly. Results are under Security → Code scanning; it isn't a required check.
+- OpenSSF Scorecard (`.github/workflows/scorecard.yml`) runs on pushes to `main` and weekly, and publishes the score shown on scorecard.dev. When publishing, the action only accepts workflows made of approved steps, so don't add `run:` steps or other actions to that workflow.
 
 ## Conventions
 
