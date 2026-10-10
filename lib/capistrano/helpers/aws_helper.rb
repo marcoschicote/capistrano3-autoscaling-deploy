@@ -3,10 +3,11 @@ require 'aws-sdk-ec2'
 
 module AwsHelper
   IP_TYPES = %w(public_ip_address public_dns_name private_ip_address private_dns_name)
+  LIFECYCLE_STATES = %w(InService)
 
-  def get_instances(aws_region, aws_access_key_id, aws_secret_access_key, aws_autoscaling_group_name, aws_ip_type, aws_profile: nil)
+  def get_instances(aws_region, aws_access_key_id, aws_secret_access_key, aws_autoscaling_group_name, aws_ip_type, aws_profile: nil, lifecycle_states: LIFECYCLE_STATES)
     client_options = aws_client_options(aws_region, aws_access_key_id, aws_secret_access_key, aws_profile)
-    retrieve_ec2_instances(client_options, aws_autoscaling_group_name, aws_ip_type)
+    retrieve_ec2_instances(client_options, aws_autoscaling_group_name, aws_ip_type, lifecycle_states)
   end
 
   # Explicit keys win, then a named profile. With neither, the SDK's default
@@ -28,8 +29,13 @@ module AwsHelper
 
   private
 
-  def retrieve_ec2_instances(client_options, autoscaling_group_name, aws_ip_type)
+  def retrieve_ec2_instances(client_options, autoscaling_group_name, aws_ip_type, lifecycle_states)
     instances = fetch_autoscaling_group_instances(client_options, autoscaling_group_name)
+
+    # Skip instances that are still launching, on standby or being terminated
+    skipped = instances.reject { |instance| lifecycle_states.include?(instance.lifecycle_state) }
+    skipped.each { |instance| puts("Skipping #{instance.instance_id} (#{instance.lifecycle_state})") }
+    instances -= skipped
 
     if instances.empty?
       autoscaling_dns = []
@@ -62,6 +68,7 @@ module AwsHelper
     # info("Auto Scaling Groups: #{as_groups}")
 
     as_group = as_groups[0]
+    raise "Auto Scaling group '#{autoscaling_group_name}' not found in #{client_options[:region]}" unless as_group
 
     # info("Auto Scaling Group instances: #{as_group.instances}")
 

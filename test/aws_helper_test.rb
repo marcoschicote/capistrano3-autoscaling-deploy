@@ -31,6 +31,30 @@ class AwsHelperTest < Minitest::Test
     assert_equal %w(i-3.public.example.com i-1.public.example.com i-2.public.example.com), instances('elastic_ip')
   end
 
+  def test_skips_instances_that_are_not_in_service
+    stub_aws(%w(i-1 i-2 i-3 i-4), lifecycle_states: { 'i-1' => 'Pending', 'i-3' => 'Terminating', 'i-4' => 'Standby' })
+
+    out, _ = capture_io do
+      assert_equal %w(i-2.public.example.com), instances('public_dns_name')
+    end
+    assert_includes out, 'Skipping i-1 (Pending)'
+    assert_includes out, 'Skipping i-3 (Terminating)'
+  end
+
+  def test_lifecycle_states_can_be_overridden
+    stub_aws(%w(i-1 i-2), lifecycle_states: { 'i-1' => 'Standby' })
+
+    result = get_instances('us-west-2', 'key', 'secret', 'my-group', 'public_dns_name', lifecycle_states: %w(InService Standby))
+    assert_equal %w(i-1.public.example.com i-2.public.example.com), result
+  end
+
+  def test_missing_group_raises_a_clear_error
+    Aws.config[:autoscaling] = { stub_responses: { describe_auto_scaling_groups: { auto_scaling_groups: [] } } }
+
+    error = assert_raises(RuntimeError) { instances('public_dns_name') }
+    assert_equal "Auto Scaling group 'my-group' not found in us-west-2", error.message
+  end
+
   def test_empty_group_returns_no_instances
     stub_aws([])
 

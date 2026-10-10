@@ -7,6 +7,7 @@ namespace :load do
     set :aws_region, 'us-west-2'
     set :aws_deploy_roles, %w{web app db}
     set :aws_ip_type, 'public_dns_name'
+    set :aws_lifecycle_states, AwsHelper::LIFECYCLE_STATES
   end
 end
 
@@ -45,8 +46,13 @@ namespace :autoscaling_deploy do
     group_name = fetch(:aws_autoscaling_group_name)
     ip_type = fetch(:aws_ip_type)
     profile = fetch(:aws_profile)
+    lifecycle_states = fetch(:aws_lifecycle_states)
 
-    instances = get_instances(region, key, secret, group_name, ip_type, aws_profile: profile)
+    instances = get_instances(region, key, secret, group_name, ip_type, aws_profile: profile, lifecycle_states: lifecycle_states)
+
+    if instances.empty?
+      raise "No instances in Auto Scaling group '#{group_name}' with lifecycle state #{lifecycle_states.join(' or ')}"
+    end
 
     puts("Found #{instances.count} servers (#{instances.join(',')}) for Auto Scaling Group: #{group_name} ")
 

@@ -49,6 +49,16 @@ class AutoscalingTasksTest < Minitest::Test
     assert_equal 3, servers.size
   end
 
+  def test_no_matching_instances_stops_the_deploy
+    stub_aws(%w(i-1 i-2), lifecycle_states: { 'i-1' => 'Terminating', 'i-2' => 'Pending' })
+
+    error = assert_raises(RuntimeError) do
+      capture_io { Rake::Task['autoscaling_deploy:setup_instances'].invoke }
+    end
+    assert_equal "No instances in Auto Scaling group 'my-group' with lifecycle state InService", error.message
+    assert_empty servers
+  end
+
   def test_runs_before_deploy_starting
     assert_includes Rake::Task["deploy:starting"].prerequisites.map(&:to_s), 'deploy:check_autoscaling_hooks'
   end

@@ -41,6 +41,8 @@ require 'capistrano/autoscaling_deploy'
 
 2.0 uses the current AWS SDK for Ruby (`aws-sdk-autoscaling` and `aws-sdk-ec2`) instead of the retired `aws-sdk` v2, so it no longer installs `aws-sdk` v2. If your own deploy code uses `aws-sdk` v2, add it to your Gemfile or, better, move that code to the current SDK.
 
+2.0 only deploys to instances whose lifecycle state is `InService`, and stops with an error if the Auto Scaling group doesn't exist or has no such instances. Before, it deployed to every instance in the group, including ones being launched or terminated, and carried on with no servers if the group was empty. To also deploy to other states, set `aws_lifecycle_states` (for example `%w(InService Standby)`).
+
 Versions before 2.0 also loaded [capistrano-bundler](https://github.com/capistrano/bundler), which runs `bundle install` on your servers during deploy. 2.0 no longer does this. If your deploy relies on it, add it to your Gemfile:
 
     gem 'capistrano-bundler'
@@ -64,6 +66,10 @@ set :aws_deploy_user, 'USER FOR SSH CONNECTION'
 # optional: defaults to 'public_dns_name'
 # select from ['public_ip_address', 'public_dns_name', 'private_ip_address', 'private_dns_name']
 set :aws_ip_type, 'public_dns_name'
+
+# optional: defaults to %w(InService)
+# lifecycle states of the instances to deploy to
+set :aws_lifecycle_states, %w(InService)
 ```
 
 ### AWS credentials
@@ -89,7 +95,9 @@ you can add more auto scaling configs to deploy to multiple auto scaling groups 
 
 ## How this works
 
-This gem will fetch only running instances that have an auto scaling tag name you specified
+This gem fetches the instances in the Auto Scaling group you specified and keeps only those whose [lifecycle state](https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-lifecycle.html) is in `aws_lifecycle_states` (`InService` by default). Instances that are still launching, on standby or being terminated are skipped. It doesn't filter on health status, so you can still deploy a fix when every instance is failing its health checks.
+
+The deploy stops with an error if the group doesn't exist or has no matching instances.
 
 It will then reject the roles of :db and the :primary => true for all servers found **but the first one** 
 
