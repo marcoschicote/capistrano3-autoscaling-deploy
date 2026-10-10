@@ -53,12 +53,10 @@ require 'capistrano/bundler'
 
 ## Usage
 
-Set credentials with AmazonEC2ReadOnlyAccess permission in the capistrano deploy script / stage files add the following lines
+In the capistrano deploy script / stage files add the following lines
 
 ```ruby
 set :aws_region, 'us-west-2'
-set :aws_access_key_id, 'YOUR AWS KEY ID'
-set :aws_secret_access_key, 'YOUR AWS SECRET KEY'
 set :aws_autoscaling_group_name, 'YOUR NAME OF AUTO SCALING GROUP NAME'
 set :aws_deploy_roles, [:app, :web, :db]
 set :aws_deploy_user, 'USER FOR SSH CONNECTION'
@@ -66,6 +64,25 @@ set :aws_deploy_user, 'USER FOR SSH CONNECTION'
 # optional: defaults to 'public_dns_name'
 # select from ['public_ip_address', 'public_dns_name', 'private_ip_address', 'private_dns_name']
 set :aws_ip_type, 'public_dns_name'
+```
+
+### AWS credentials
+
+The credentials need read access to Auto Scaling and EC2 (`autoscaling:DescribeAutoScalingGroups` and `ec2:DescribeInstances`; the `AmazonEC2ReadOnlyAccess` managed policy covers both).
+
+By default the gem uses the [AWS SDK's default credential chain](https://docs.aws.amazon.com/sdk-for-ruby/v3/developer-guide/credential-providers.html): environment variables (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`), `AWS_PROFILE` and the shared config and credentials files, AWS SSO, and ECS task or EC2 instance roles. This is the recommended setup, and it needs no settings.
+
+To use a specific profile from your shared config:
+
+```ruby
+set :aws_profile, 'deploy'
+```
+
+You can still set static keys, but avoid committing them to your repository. If both are set they take precedence over `aws_profile`:
+
+```ruby
+set :aws_access_key_id, ENV['DEPLOY_AWS_ACCESS_KEY_ID']
+set :aws_secret_access_key, ENV['DEPLOY_AWS_SECRET_ACCESS_KEY']
 ```
 
 you can add more auto scaling configs to deploy to multiple auto scaling groups like a cluster

@@ -1,5 +1,9 @@
+# Never try to reach the EC2 instance metadata service for credentials
+ENV['AWS_EC2_METADATA_DISABLED'] = 'true'
+
 require 'minitest/autorun'
 require 'capistrano/all'
+Rake.application.options.trace = false
 require 'capistrano/setup'
 require 'capistrano/deploy'
 require 'capistrano/autoscaling_deploy'

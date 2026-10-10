@@ -44,8 +44,9 @@ namespace :autoscaling_deploy do
     secret = fetch(:aws_secret_access_key)
     group_name = fetch(:aws_autoscaling_group_name)
     ip_type = fetch(:aws_ip_type)
+    profile = fetch(:aws_profile)
 
-    instances = get_instances(region, key, secret, group_name, ip_type)
+    instances = get_instances(region, key, secret, group_name, ip_type, aws_profile: profile)
 
     puts("Found #{instances.count} servers (#{instances.join(',')}) for Auto Scaling Group: #{group_name} ")
 
