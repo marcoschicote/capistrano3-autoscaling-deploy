@@ -1,0 +1,26 @@
+name: Release
+
+# Run manually from the Actions tab once the version in
+# lib/capistrano/autoscaling_deploy/version.rb and CHANGELOG.md are updated on master.
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write # push the version tag
+      id-token: write # RubyGems trusted publishing
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '4.0'
+          bundler-cache: true
+      - run: bundle exec rake test
+      # Builds the gem, pushes the vX.Y.Z tag and publishes it to RubyGems
+      - uses: rubygems/release-gem@v1

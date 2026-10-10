@@ -122,3 +122,10 @@ server ip_address3, :app, :web
 5. Create new Pull Request
 
 Run the tests with `bundle exec rake test`. They use the AWS SDK's stubbed responses, so they don't need AWS credentials or network access.
+
+## Releasing
+
+Releases are published to RubyGems from GitHub Actions using [trusted publishing](https://guides.rubygems.org/trusted-publishing/), so no API key is stored anywhere.
+
+1. Update the version in `lib/capistrano/autoscaling_deploy/version.rb` and add a section to `CHANGELOG.md`, and merge them to `master`.
+2. In the repository's **Actions** tab, run the **Release** workflow on `master`. It runs the tests, builds the gem, pushes the `vX.Y.Z` tag and publishes the gem.
