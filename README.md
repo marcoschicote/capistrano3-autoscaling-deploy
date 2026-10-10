@@ -35,6 +35,18 @@ Add this line to your application's Capfile:
 require 'capistrano/autoscaling_deploy'
 ```
 
+### Upgrading to 2.0
+
+Versions before 2.0 also loaded [capistrano-bundler](https://github.com/capistrano/bundler), which runs `bundle install` on your servers during deploy. 2.0 no longer does this. If your deploy relies on it, add it to your Gemfile:
+
+    gem 'capistrano-bundler'
+
+and require it in your Capfile:
+
+```ruby
+require 'capistrano/bundler'
+```
+
 ## Usage
 
 Set credentials with AmazonEC2ReadOnlyAccess permission in the capistrano deploy script / stage files add the following lines
