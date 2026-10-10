@@ -4,15 +4,15 @@ module CapHelper
     roles.map { |role| role.is_a?(String) ? role.to_sym : role }
   end
 
+  # Roles for every instance but the first: no :db (for migrations) and
+  # no primary: true (for assets precompile)
   def sanitize_roles(roles)
-    # remove :db (for migrations), remove  :primary => :true (for assets precompile)
-    symbolize_roles(roles).inject([]){|acc, role|
-      if !role.is_a?(Hash)
-        acc << role if role != :db
-      else
-        acc << role.reject{|k,v| k == :primary}
+    symbolize_roles(roles).filter_map do |role|
+      if role.is_a?(Hash)
+        role.except(:primary)
+      elsif role != :db
+        role
       end
-      acc
-    }
+    end
   end
 end

@@ -1,9 +1,10 @@
-require 'bundler/gem_tasks'
-require 'rake/testtask'
+require "bundler/gem_tasks"
+require "rake/testtask"
+require "standard/rake"
 
 Rake::TestTask.new(:test) do |t|
-  t.libs << 'test'
-  t.test_files = FileList['test/**/*_test.rb']
+  t.libs << "test"
+  t.test_files = FileList["test/**/*_test.rb"]
 end
 
-task default: :test
+task default: %i[test standard]

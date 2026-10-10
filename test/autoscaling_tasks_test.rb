@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 
 class AutoscalingTasksTest < Minitest::Test
   include Capistrano::DSL
@@ -7,13 +7,13 @@ class AutoscalingTasksTest < Minitest::Test
   def setup
     Capistrano::Configuration.reset!
     Rake::Task.tasks.each(&:reenable)
-    Rake::Task['load:defaults'].invoke
-    set :aws_autoscaling_group_name, 'my-group'
-    set :aws_access_key_id, 'key'
-    set :aws_secret_access_key, 'secret'
-    set :aws_deploy_user, 'deploy'
+    Rake::Task["load:defaults"].invoke
+    set :aws_autoscaling_group_name, "my-group"
+    set :aws_access_key_id, "key"
+    set :aws_secret_access_key, "secret"
+    set :aws_deploy_user, "deploy"
     set :aws_deploy_roles, [:web, :app, :db]
-    stub_aws(%w(i-3 i-1 i-2))
+    stub_aws(%w[i-3 i-1 i-2])
   end
 
   def servers
@@ -21,19 +21,19 @@ class AutoscalingTasksTest < Minitest::Test
   end
 
   def test_first_instance_gets_every_role_and_is_primary
-    capture_io { Rake::Task['autoscaling_deploy:setup_instances'].invoke }
+    capture_io { Rake::Task["autoscaling_deploy:setup_instances"].invoke }
 
     first = servers.first
-    assert_equal 'i-3.public.example.com', first.hostname
-    assert_equal 'deploy', first.user
+    assert_equal "i-3.public.example.com", first.hostname
+    assert_equal "deploy", first.user
     assert_equal Set[:web, :app, :db], first.roles
     assert first.primary
   end
 
   def test_other_instances_skip_db_role_and_are_not_primary
-    capture_io { Rake::Task['autoscaling_deploy:setup_instances'].invoke }
+    capture_io { Rake::Task["autoscaling_deploy:setup_instances"].invoke }
 
-    assert_equal %w(i-1.public.example.com i-2.public.example.com), servers.drop(1).map(&:hostname)
+    assert_equal %w[i-1.public.example.com i-2.public.example.com], servers.drop(1).map(&:hostname)
     servers.drop(1).each do |server|
       assert_equal Set[:web, :app], server.roles
       refute server.primary
@@ -41,71 +41,71 @@ class AutoscalingTasksTest < Minitest::Test
   end
 
   def test_only_the_first_position_is_primary_even_with_repeated_hostnames
-    stub_aws(%w(i-3 i-1 i-2), overrides: { 'i-2' => { public_dns_name: 'i-3.public.example.com' } })
-    out, _ = capture_io { Rake::Task['autoscaling_deploy:setup_instances'].invoke }
+    stub_aws(%w[i-3 i-1 i-2], overrides: {"i-2" => {public_dns_name: "i-3.public.example.com"}})
+    out, _ = capture_io { Rake::Task["autoscaling_deploy:setup_instances"].invoke }
 
-    assert_equal 1, out.scan('First Server').size
+    assert_equal 1, out.scan("First Server").size
   end
 
   def test_blank_hostnames_stop_the_deploy
-    stub_aws(%w(i-3 i-1 i-2), overrides: %w(i-3 i-1 i-2).to_h { |id| [id, { public_dns_name: '' }] })
+    stub_aws(%w[i-3 i-1 i-2], overrides: %w[i-3 i-1 i-2].to_h { |id| [id, {public_dns_name: ""}] })
 
     assert_raises(RuntimeError) do
-      capture_io { Rake::Task['autoscaling_deploy:setup_instances'].invoke }
+      capture_io { Rake::Task["autoscaling_deploy:setup_instances"].invoke }
     end
     assert_empty servers
   end
 
   def test_default_roles_give_db_to_the_first_instance_only
     delete :aws_deploy_roles
-    Rake::Task['load:defaults'].reenable
-    Rake::Task['load:defaults'].invoke
-    capture_io { Rake::Task['autoscaling_deploy:setup_instances'].invoke }
+    Rake::Task["load:defaults"].reenable
+    Rake::Task["load:defaults"].invoke
+    capture_io { Rake::Task["autoscaling_deploy:setup_instances"].invoke }
 
     assert_equal Set[:web, :app, :db], servers.first.roles
     servers.drop(1).each { |server| assert_equal Set[:web, :app], server.roles }
-    assert_equal ['i-3.public.example.com'], roles(:db).map(&:hostname)
+    assert_equal ["i-3.public.example.com"], roles(:db).map(&:hostname)
   end
 
   def test_string_roles_give_db_to_the_first_instance_only
-    set :aws_deploy_roles, %w{web app db}
-    capture_io { Rake::Task['autoscaling_deploy:setup_instances'].invoke }
+    set :aws_deploy_roles, %w[web app db]
+    capture_io { Rake::Task["autoscaling_deploy:setup_instances"].invoke }
 
-    assert_equal ['i-3.public.example.com'], roles(:db).map(&:hostname)
+    assert_equal ["i-3.public.example.com"], roles(:db).map(&:hostname)
   end
 
   def test_works_without_explicit_keys
     set :aws_access_key_id, nil
     set :aws_secret_access_key, nil
-    set :aws_profile, 'deploy'
-    capture_io { Rake::Task['autoscaling_deploy:setup_instances'].invoke }
+    set :aws_profile, "deploy"
+    capture_io { Rake::Task["autoscaling_deploy:setup_instances"].invoke }
 
     assert_equal 3, servers.size
   end
 
   def test_no_matching_instances_stops_the_deploy
-    stub_aws(%w(i-1 i-2), lifecycle_states: { 'i-1' => 'Terminating', 'i-2' => 'Pending' })
+    stub_aws(%w[i-1 i-2], lifecycle_states: {"i-1" => "Terminating", "i-2" => "Pending"})
 
     error = assert_raises(RuntimeError) do
-      capture_io { Rake::Task['autoscaling_deploy:setup_instances'].invoke }
+      capture_io { Rake::Task["autoscaling_deploy:setup_instances"].invoke }
     end
     assert_equal "No instances in Auto Scaling group 'my-group' with lifecycle state InService", error.message
     assert_empty servers
   end
 
   def test_runs_before_deploy_starting
-    assert_includes Rake::Task["deploy:starting"].prerequisites.map(&:to_s), 'deploy:check_autoscaling_hooks'
+    assert_includes Rake::Task["deploy:starting"].prerequisites.map(&:to_s), "deploy:check_autoscaling_hooks"
   end
 
   def test_hook_adds_servers_when_enabled
-    capture_io { Rake::Task['deploy:check_autoscaling_hooks'].invoke }
+    capture_io { Rake::Task["deploy:check_autoscaling_hooks"].invoke }
 
     assert_equal 3, servers.size
   end
 
   def test_hook_does_nothing_when_disabled
     set :aws_autoscaling, false
-    Rake::Task['deploy:check_autoscaling_hooks'].invoke
+    Rake::Task["deploy:check_autoscaling_hooks"].invoke
 
     assert_empty servers
   end
