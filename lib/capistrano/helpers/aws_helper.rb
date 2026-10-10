@@ -53,6 +53,13 @@ module AwsHelper
       autoscaling_dns = instance_ids.map do |instance_id|
         ec2_instances.fetch(instance_id).send(aws_ip_type.to_sym)
       end
+
+      # e.g. public_dns_name is empty for instances in a private subnet
+      blank_ids = instance_ids.zip(autoscaling_dns).select { |_, address| address.to_s.strip.empty? }.map(&:first)
+      unless blank_ids.empty?
+        raise "Instances #{blank_ids.join(', ')} have no #{aws_ip_type}. " \
+              "Set :aws_ip_type to one of #{IP_TYPES.join(', ')} (private_ip_address for instances without public addresses)"
+      end
     end
 
     autoscaling_dns

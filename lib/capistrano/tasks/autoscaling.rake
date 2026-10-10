@@ -27,8 +27,8 @@ namespace :autoscaling_deploy do
     aws_deploy_roles = symbolize_roles(fetch(:aws_deploy_roles))
     aws_deploy_user = fetch(:aws_deploy_user)
 
-    ec2_instances.each {|instance|
-      if ec2_instances.first == instance
+    ec2_instances.each_with_index {|instance, index|
+      if index == 0
         server instance, user: aws_deploy_user, roles: aws_deploy_roles, primary: true
         puts("First Server: #{instance} - #{aws_deploy_roles}")
       else

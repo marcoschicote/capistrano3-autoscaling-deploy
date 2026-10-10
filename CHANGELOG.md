@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Instances without an address for `aws_ip_type` (for example `public_dns_name` in a private subnet) now stop the deploy with an error naming them. Before, they were all registered as one server with an empty hostname, and each was treated as the primary server ([#23](https://github.com/marcoschicote/capistrano3-autoscaling-deploy/issues/23)).
+- The primary server is chosen by position in the Auto Scaling group, not by comparing hostnames ([#23](https://github.com/marcoschicote/capistrano3-autoscaling-deploy/issues/23)).
+
 ## 2.0.0
 
 First release since 1.6 (2017). See [Upgrading to 2.0](README.md#upgrading-to-20) before updating.

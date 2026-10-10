@@ -40,6 +40,22 @@ class AutoscalingTasksTest < Minitest::Test
     end
   end
 
+  def test_only_the_first_position_is_primary_even_with_repeated_hostnames
+    stub_aws(%w(i-3 i-1 i-2), overrides: { 'i-2' => { public_dns_name: 'i-3.public.example.com' } })
+    out, _ = capture_io { Rake::Task['autoscaling_deploy:setup_instances'].invoke }
+
+    assert_equal 1, out.scan('First Server').size
+  end
+
+  def test_blank_hostnames_stop_the_deploy
+    stub_aws(%w(i-3 i-1 i-2), overrides: %w(i-3 i-1 i-2).to_h { |id| [id, { public_dns_name: '' }] })
+
+    assert_raises(RuntimeError) do
+      capture_io { Rake::Task['autoscaling_deploy:setup_instances'].invoke }
+    end
+    assert_empty servers
+  end
+
   def test_default_roles_give_db_to_the_first_instance_only
     delete :aws_deploy_roles
     Rake::Task['load:defaults'].reenable
