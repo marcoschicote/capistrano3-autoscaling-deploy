@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.0.2
+
+No changes to how the plugin works.
+
+### Changed
+- The gem's changelog link on RubyGems now points to the `main` branch, which replaced `master`.
+
+### Development
+- Code style is checked with Standard Ruby in CI.
+- CodeQL and OpenSSF Scorecard scan the code and workflows, and GitHub Actions are pinned to commit SHAs.
+- Added a security policy (`SECURITY.md`).
+
 ## 2.0.1
 
 ### Fixed
